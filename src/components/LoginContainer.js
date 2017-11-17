@@ -28,7 +28,7 @@ class LoginContainer extends Component {
 	login() {
 		firebase
 			.auth()
-			.signInWIthEmailAndPassword(this.state.email, this.state.password)
+			.signInWithEmailAndPassword(this.state.email, this.state.password)
 			.then(res => {
 				console.log(res);
 			})
