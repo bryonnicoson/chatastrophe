@@ -14,7 +14,6 @@ export default class ChatContainer extends Component {
 					</button>
 				</Header>
 				<h1>Hello from ChatContainer</h1>
-				{props.children}
 			</div>
 		);
 	}
