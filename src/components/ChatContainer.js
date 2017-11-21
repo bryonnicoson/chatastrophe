@@ -13,7 +13,7 @@ export default class ChatContainer extends Component {
 						Logout
 					</button>
 				</Header>
-				<h1>Hello from ChatContainer</h1>
+				<h1>ChatContainer</h1>
 			</div>
 		);
 	}
