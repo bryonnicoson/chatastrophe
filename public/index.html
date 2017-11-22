@@ -22,6 +22,21 @@
 		  // make firebase available to rest of app
 		  window.firebase = firebase;
 		  firebase.initializeApp(config);
-	</script>
+		</script>
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', function() {
+					navigator.serviceWorker.register('sw.js').then(function(registration) {
+						console.log('Registered!');
+					}, function(err) {
+						console.log('Registration failed: ', err);
+					}).catch(function(err) {
+						console.log(err);
+					});
+				});
+			} else {
+				console.log('service worker is not supported');
+			}
+		</script>	
 	</body>
 </html>
