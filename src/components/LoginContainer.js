@@ -55,7 +55,6 @@ class LoginContainer extends Component {
 	}
 
 	onLogin() {
-		// redirect to '/' by pushing it onto browser history
 		this.props.history.push('/');
 	}
 

@@ -3,17 +3,42 @@ import Header from './Header';
 import { Link } from 'react-router-dom';
 
 export default class UserContainer extends Component {
+
+	renderedUserEmail = false;
+
+	getAuthor = author => {
+		if (!this.renderedUserEmail) {
+			this.renderedUserEmail = true;
+			return <p className="author">{author}</p>;
+		}
+	};
+
 	render() {
 		return (
-			<div id="UserContainer">
+			<div id="UserContainer" className="inner-container">
 				<Header>
 					<Link to="/">
-						<button className="red">
-							Back to Chat
-						</button>
+						<button className="red">Back to Chat</button>
 					</Link>
 				</Header>
-				<h1>UserContainer for {this.props.match.params.id}</h1>
+				{this.props.messagesLoaded ? (
+					<div id="messages-container">
+						{this.props.messages.map(msg => {
+							if (msg.user_id === this.props.userID) {
+								return (
+									<div key={msg.id} className="message">
+										{this.getAuthor(msg.author)}
+										<p>{msg.msg}</p>
+									</div>
+								);
+							}
+						})}
+					</div>
+				) : ( 
+					<div id="loading-container">
+						<img src="/assets/icon.png" alt="logo" id="loader" />
+					</div>
+				)}
 			</div>
 		);
 	}
