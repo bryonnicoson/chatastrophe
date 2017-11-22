@@ -32,8 +32,8 @@ class LoginContainer extends Component {
 			.then(res => {
 				this.onLogin();
 			})
-			.catch(err => {
-				if (err.code === 'auth/user-not-found') {
+			.catch(error => {
+				if (error.code === 'auth/user-not-found') {
 					this.signup();
 				} else {
 					this.setState({ error: 'Error logging in.' });
@@ -48,7 +48,7 @@ class LoginContainer extends Component {
 			.then(res => {
 				this.onLogin();
 			})
-			.catch(err => {
+			.catch(error => {
 				console.log(error);
 				this.setState({ error: 'Error signing up.' });
 			});
