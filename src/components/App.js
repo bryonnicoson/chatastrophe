@@ -11,8 +11,8 @@ class App extends Component {
 	state = { user: null, messages: [], messagesLoaded: false };
 
 	componentDidMount() {
-		
-		this.notifications = new NotificationResource();
+
+		this.notifications = new NotificationResource(firebase.messaging());
 
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
