@@ -11,17 +11,25 @@ class App extends Component {
 	state = { user: null, messages: [], messagesLoaded: false };
 
 	componentDidMount() {
-
-		this.notifications = new NotificationResource(firebase.messaging());
+		this.notifications = new NotificationResource(
+			firebase.messaging(),
+			firebase.database()
+		);
 
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
 				this.setState({ user });
+				this.listenForMessages();
+				this.notifications.changeUser(user);
 			} else {
 				this.props.history.push('/login')
 			}
 		});
+		this.listenForMessages();
+		this.listenForInstallBanner();
+	}
 
+	listenForMessages = () => {
 		firebase
 			.database()
 			.ref('/messages')
@@ -31,8 +39,45 @@ class App extends Component {
 					this.setState({ messagesLoaded: true });
 				}
 			});
-	}
-	
+	};
+
+	listenForInstallBanner = () => {
+		window.addEventListener('beforeinstallprompt', e => {
+			console.log('beforeinstallprompt Event fired');
+			e.preventDefault();
+			this.deferredPrompt = e;
+		});
+	};
+
+	onMessage = snapshot => {
+		const messages = Object.keys(snapshot.val()).map(key => {
+			const msg = snapshot.val()[key];
+			msg.id = key;
+			return msg;
+		});
+		this.setState({ messages });
+	};
+
+	handleSubmitMessage = msg => {
+		const data = {
+			msg,
+			author: this.state.user.email,
+			user_id: this.state.user.uid,
+			timestamp: Date.now()
+		};
+		firebase
+			.database()
+			.ref('messages/')
+			.push(data);
+		if (this.deferredPrompt) {
+			this.deferredPrompt.prompt();
+			this.deferredPrompt.userChoice.then(choice => {
+				console.log(choice);
+			});
+			this.deferredPrompt = null;
+		}
+	};
+
 	render() {
 		return (
 			<div id = "container">
@@ -40,7 +85,7 @@ class App extends Component {
 				<Route 
 					exact 
 					path="/" 
-					render={ () => (
+					render={() => (
 						<ChatContainer 
 							messagesLoaded={this.state.messagesLoaded}
 							onSubmit={this.handleSubmitMessage} 
@@ -57,28 +102,6 @@ class App extends Component {
 					)} />
 			</div>
 		);
-	}
-
-	handleSubmitMessage = msg => {
-		const data = {
-			msg,
-			author: this.state.user.email,
-			user_id: this.state.user.uid,
-			timestamp: Date.now()
-		};
-		firebase
-			.database()
-			.ref('messages/')
-			.push(data);
-	}
-
-	onMessage = (snapshot) => {
-		const messages = Object.keys(snapshot.val()).map(key => {
-			const msg = snapshot.val()[key];
-			msg.id = key;
-			return msg;
-		});
-		this.setState({ messages });
 	}
 }
 

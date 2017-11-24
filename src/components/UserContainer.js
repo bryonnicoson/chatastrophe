@@ -22,7 +22,7 @@ export default class UserContainer extends Component {
 					</Link>
 				</Header>
 				{this.props.messagesLoaded ? (
-					<div id="messages-container">
+					<div id="message-container">
 						{this.props.messages.map(msg => {
 							if (msg.user_id === this.props.userID) {
 								return (
