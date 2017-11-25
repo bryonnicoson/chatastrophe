@@ -1,10 +1,25 @@
 import React, { Component } from 'react';
 import { Route, withRouter } from 'react-router-dom';
-import LoginContainer from './LoginContainer';
-import ChatContainer from './ChatContainer';
-import UserContainer from './UserContainer';
+import AsyncComponent from './AsyncComponent';
 import NotificationResource from '../resources/NotificationResource';
 import './app.css';
+
+const loadLogin = () => {
+	return import('./LoginContainer').then(module => module.default);
+};
+
+const loadChat = () => {
+	return import('./ChatContainer').then(module => module.default);
+};
+
+const loadUser = () => {
+	return import('./UserContainer').then(module => module.default);
+};
+
+const LoginContainer = AsyncComponent(loadLogin);
+const ChatContainer = AsyncComponent(loadChat);
+const UserContainer = AsyncComponent(loadUser);
+
 
 class App extends Component {
 
@@ -14,7 +29,7 @@ class App extends Component {
 		this.notifications = new NotificationResource(
 			firebase.messaging(),
 			firebase.database()
-		);
+			);
 
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
@@ -31,14 +46,14 @@ class App extends Component {
 
 	listenForMessages = () => {
 		firebase
-			.database()
-			.ref('/messages')
-			.on('value', snapshot => {
-				this.onMessage(snapshot);
-				if (!this.state.messagesLoaded) {
-					this.setState({ messagesLoaded: true });
-				}
-			});
+		.database()
+		.ref('/messages')
+		.on('value', snapshot => {
+			this.onMessage(snapshot);
+			if (!this.state.messagesLoaded) {
+				this.setState({ messagesLoaded: true });
+			}
+		});
 	};
 
 	listenForInstallBanner = () => {
@@ -66,9 +81,9 @@ class App extends Component {
 			timestamp: Date.now()
 		};
 		firebase
-			.database()
-			.ref('messages/')
-			.push(data);
+		.database()
+		.ref('messages/')
+		.push(data);
 		if (this.deferredPrompt) {
 			this.deferredPrompt.prompt();
 			this.deferredPrompt.userChoice.then(choice => {
@@ -81,27 +96,27 @@ class App extends Component {
 	render() {
 		return (
 			<div id = "container">
-				<Route path="/login" component={LoginContainer} />
-				<Route 
-					exact 
-					path="/" 
-					render={() => (
-						<ChatContainer 
-							messagesLoaded={this.state.messagesLoaded}
-							onSubmit={this.handleSubmitMessage} 
-							user={this.state.user}
-							messages={this.state.messages} /> 
-					)} />
-				<Route 
-					path="/users/:id" 
-					render={({ history, match }) => ( 
-						<UserContainer
-							messages={this.state.messages}
-							messagesLoaded={this.state.messagesLoaded}
-							userID={match.params.id} />
-					)} />
+			<Route path="/login" component={LoginContainer} />
+			<Route 
+			exact 
+			path="/" 
+			render={() => (
+				<ChatContainer 
+				messagesLoaded={this.state.messagesLoaded}
+				onSubmit={this.handleSubmitMessage} 
+				user={this.state.user}
+				messages={this.state.messages} /> 
+				)} />
+			<Route 
+			path="/users/:id" 
+			render={({ history, match }) => ( 
+				<UserContainer
+				messages={this.state.messages}
+				messagesLoaded={this.state.messagesLoaded}
+				userID={match.params.id} />
+				)} />
 			</div>
-		);
+			);
 	}
 }
 
