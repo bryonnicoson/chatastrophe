@@ -57,7 +57,7 @@ export default class ChatContainer extends Component {
 
 	render() {
 		return (
-			<div id="ChatContainer" className="inner-container">
+		<div id="ChatContainer" className="inner-container">
 				<Header>
 					<button className="red" onClick={this.handleLogout}>
 						Logout
@@ -95,7 +95,7 @@ export default class ChatContainer extends Component {
 						</svg>
 					</button>	
 				</div>
-			</div>
+		</div>
 		);
 	}
 }
